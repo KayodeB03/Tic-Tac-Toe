@@ -1,7 +1,7 @@
-function gameBoard() {
+const gameBoard = (() => {
+  const board = [];
   const rows = 3;
   const columns = 3;
-  const board = [];
 
   for (let i = 0; i < rows; i++) {
     board.push([]);
@@ -9,39 +9,65 @@ function gameBoard() {
       board[i].push(null);
     }
   }
+  function getBoard() {
+    return board;
+  }
 
-  return board;
-}
+  function placeMarker(row, column, marker) {
+    board[row][column] = marker;
+  }
 
-function playerCreator(name, marker) {
-  const player = function () {
-    this.name = name;
-    this.marker = marker;
+  function isSpaceAvailible(row, column) {
+    return board[row][column] === null;
+  }
+
+  return {
+    // expose things you want the rest of the program to use
+    getBoard,
+    placeMarker,
+    isSpaceAvailible,
   };
-  return new player();
-}
+})();
 
-const player1 = playerCreator(`${"Player 1"}`, "X");
-const player2 = playerCreator(`${"Player 2"}`, "O");
+const gameController = (() => {
+  function playerCreator(name, marker) {
+    const player = function () {
+      this.name = name;
+      this.marker = marker;
+    };
+    return new player();
+  }
 
-const gameController = {
-  board: gameBoard(),
-  player1: player1,
-  player2: player2,
-  currentPlayer: player1,
-  gameOver: false,
+  const player1 = playerCreator(`${"Player 1"}`, "X");
+  const player2 = playerCreator(`${"Player 2"}`, "O");
 
-  switchTurn() {
-    this.currentPlayer = this.currentPlayer === player1 ? player2 : player1;
-  },
+  let currentPlayer = player1;
 
-  checkWinner() {},
+  function switchTurn() {
+    currentPlayer = currentPlayer === player1 ? player2 : player1;
+  }
 
-  playRound(row, column) {
-    this.board[row][column] = this.currentPlayer.marker;
-    this.switchTurn();
-    console.log(this.board);
-  },
-};
+  function playRound(row, column) {
+    if (gameBoard.isSpaceAvailible(row, column)) {
+      gameBoard.placeMarker(row, column, currentPlayer.marker);
+      switchTurn();
+      console.log(gameBoard.getBoard());
+    } else {
+      console.log("Space is not availible, Try again.");
+    }
+  }
 
-console.log(gameBoard());
+  function checkWinner() {}
+
+  return {
+    player1,
+    player2,
+    currentPlayer,
+    switchTurn,
+    playRound,
+  };
+})();
+
+console.log(gameBoard.getBoard());
+
+console.log(gameController.currentPlayer);
