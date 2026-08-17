@@ -35,12 +35,7 @@ const gameController = {
     this.currentPlayer = this.currentPlayer === player1 ? player2 : player1;
   },
 
-  checkWinner(rows, columns) {
-    if (this.board[rows][columns] === this.currentPlayer.marker) {
-      return true;
-    }
-    return false;
-  },
+  checkWinner() {},
 
   playRound(row, column) {
     this.board[row][column] = this.currentPlayer.marker;
