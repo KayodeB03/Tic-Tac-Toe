@@ -1,0 +1,109 @@
+:root {
+  --background-color: #1a1a1a;
+  --text-color: #fff;
+  --border-color: #333;
+  --cell-size: 6rem;
+  --cell-color: #232323;
+  --cell-hover-color: #2e2e2e;
+  --accent-color: #4ade80;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+#gameBoard {
+  display: grid;
+  grid-template-columns: repeat(3, var(--cell-size));
+  grid-template-rows: repeat(3, var(--cell-size));
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background-color: var(--border-color);
+  border-radius: 0.75rem;
+  box-shadow: 0 1rem 2rem rgb(0 0 0 / 0.5);
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--cell-color);
+  border-radius: 0.5rem;
+  font-size: calc(var(--cell-size) * 0.55);
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color 150ms ease,
+    transform 150ms ease;
+}
+
+.cell:hover {
+  background-color: var(--cell-hover-color);
+  transform: scale(1.03);
+}
+
+.cell:empty:hover::after {
+  content: "";
+  width: 40%;
+  height: 40%;
+  border-radius: 50%;
+  background-color: rgb(255 255 255 / 0.08);
+}
+
+.cell:not(:empty) {
+  cursor: not-allowed;
+  color: var(--accent-color);
+}
+
+#restartButton {
+  padding: 0.75rem 1.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background-color: var(--cell-color);
+  color: var(--text-color);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    transform 150ms ease;
+}
+
+#restartButton:hover {
+  background-color: var(--cell-hover-color);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+#restartButton:active {
+  transform: scale(0.97);
+}
+
+#restartButton:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+  :root {
+    --cell-size: 4.5rem;
+  }
+}

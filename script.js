@@ -51,11 +51,12 @@ const gameController = (() => {
     if (gameBoard.isSpaceAvailible(row, column)) {
       gameBoard.placeMarker(row, column, currentPlayer.marker);
       console.log(gameBoard.getBoard());
+      checkWinner();
+      switchTurn();
+      domManager.domUpdater();
     } else {
       console.log("Space is not availible, Try again.");
     }
-    checkWinner();
-    switchTurn();
   }
 
   const winConditions = [
@@ -126,4 +127,45 @@ const gameController = (() => {
   };
 })();
 
+const domManager = (() => {
+  const gameBoardElement = document.getElementById("gameBoard");
+
+  //create gameboard DOM
+  function createGameboardDOM() {
+    const board = gameBoard.getBoard();
+    for (let i = 0; i < board.length; i++) {
+      for (let j = 0; j < board[i].length; j++) {
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+        cell.dataset.row = i;
+        cell.dataset.column = j;
+        cell.addEventListener("click", () => {
+          gameController.playRound(i, j);
+        });
+        gameBoardElement.appendChild(cell);
+      }
+    }
+  }
+
+  function domUpdater() {
+    const board = gameBoard.getBoard();
+
+    for (let i = 0; i < board.length; i++) {
+      for (let j = 0; j < board[i].length; j++) {
+        const cell = document.querySelector(
+          `[data-row="${i}"][data-column="${j}"]`,
+        );
+
+        cell.textContent = board[i][j];
+      }
+    }
+  }
+
+  return {
+    createGameboardDOM,
+    domUpdater,
+  };
+})();
+
+domManager.createGameboardDOM();
 console.log(gameBoard.getBoard());
