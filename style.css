@@ -6,6 +6,19 @@
   --cell-color: #232323;
   --cell-hover-color: #2e2e2e;
   --accent-color: #4ade80;
+  --hover-dot-color: rgb(255 255 255 / 0.08);
+  --board-shadow: 0 1rem 2rem rgb(0 0 0 / 0.5);
+}
+
+body.light {
+  --background-color: #f4f4f5;
+  --text-color: #18181b;
+  --border-color: #d4d4d8;
+  --cell-color: #ffffff;
+  --cell-hover-color: #ececee;
+  --accent-color: #7c3aed;
+  --hover-dot-color: rgb(0 0 0 / 0.06);
+  --board-shadow: 0 1rem 2rem rgb(0 0 0 / 0.12);
 }
 
 * {
@@ -23,6 +36,9 @@ body {
   background-color: var(--background-color);
   color: var(--text-color);
   font-family: "Segoe UI", system-ui, sans-serif;
+  transition:
+    background-color 250ms ease,
+    color 250ms ease;
 }
 
 #gameBoard {
@@ -33,7 +49,10 @@ body {
   padding: 0.5rem;
   background-color: var(--border-color);
   border-radius: 0.75rem;
-  box-shadow: 0 1rem 2rem rgb(0 0 0 / 0.5);
+  box-shadow: var(--board-shadow);
+  transition:
+    background-color 250ms ease,
+    box-shadow 250ms ease;
 }
 
 .cell {
@@ -62,7 +81,7 @@ body {
   width: 40%;
   height: 40%;
   border-radius: 50%;
-  background-color: rgb(255 255 255 / 0.08);
+  background-color: var(--hover-dot-color);
 }
 
 .cell:not(:empty) {
@@ -70,7 +89,20 @@ body {
   color: var(--accent-color);
 }
 
-#restartButton {
+.turnDisplay {
+  margin: 0;
+  color: var(--accent-color);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.controls {
+  display: flex;
+  gap: 1rem;
+}
+
+.controlButton {
   padding: 0.75rem 1.75rem;
   border: 1px solid var(--border-color);
   border-radius: 0.5rem;
@@ -87,17 +119,17 @@ body {
     transform 150ms ease;
 }
 
-#restartButton:hover {
+.controlButton:hover {
   background-color: var(--cell-hover-color);
   border-color: var(--accent-color);
   color: var(--accent-color);
 }
 
-#restartButton:active {
+.controlButton:active {
   transform: scale(0.97);
 }
 
-#restartButton:focus-visible {
+.controlButton:focus-visible {
   outline: 2px solid var(--accent-color);
   outline-offset: 2px;
 }
@@ -105,5 +137,9 @@ body {
 @media (max-width: 480px) {
   :root {
     --cell-size: 4.5rem;
+  }
+
+  .controls {
+    flex-direction: column;
   }
 }

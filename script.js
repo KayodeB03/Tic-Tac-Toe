@@ -21,11 +21,20 @@ const gameBoard = (() => {
     return board[row][column] === null;
   }
 
+  function resetBoard() {
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < columns; j++) {
+        board[i][j] = null;
+      }
+    }
+  }
+
   return {
     // expose things you want the rest of the program to use
     getBoard,
     placeMarker,
     isSpaceAvailible,
+    resetBoard,
   };
 })();
 
@@ -47,15 +56,30 @@ const gameController = (() => {
     currentPlayer = currentPlayer === player1 ? player2 : player1;
   }
 
+  let gameActive = true;
+
   function playRound(row, column) {
+    if (!gameActive) {
+      return;
+    }
+
     if (gameBoard.isSpaceAvailible(row, column)) {
       gameBoard.placeMarker(row, column, currentPlayer.marker);
-      console.log(gameBoard.getBoard());
-      checkWinner();
+
+      const result = gameOver();
+
+      if (result !== false) {
+        gameActive = false;
+        domManager.domUpdater();
+        domManager.displayResult(result);
+        return;
+      }
+
       switchTurn();
       domManager.domUpdater();
+      domManager.turnUpdater();
     } else {
-      console.log("Space is not availible, Try again.");
+      console.log("Space is not available, try again.");
     }
   }
 
@@ -105,30 +129,70 @@ const gameController = (() => {
   function checkWinner() {
     const board = gameBoard.getBoard();
     const marker = currentPlayer.marker;
+
     for (const combination of winConditions) {
       const [a, b, c] = combination;
 
-      // check a, b, and c
       if (
         board[a[0]][a[1]] === marker &&
         board[b[0]][b[1]] === marker &&
         board[c[0]][c[1]] === marker
       ) {
-        console.log(`${currentPlayer.name} wins!`);
-        return;
+        return currentPlayer;
       }
     }
+
+    return null;
+  }
+
+  function gameOver() {
+    const winner = checkWinner();
+
+    if (winner) {
+      return winner;
+    }
+
+    const board = gameBoard.getBoard();
+
+    for (let i = 0; i < board.length; i++) {
+      for (let j = 0; j < board[i].length; j++) {
+        if (gameBoard.isSpaceAvailible(i, j)) {
+          return false;
+        }
+      }
+    }
+
+    return "tie";
+  }
+
+  function resetGame() {
+    gameBoard.resetBoard();
+    currentPlayer = player1;
+    gameActive = true;
+  }
+
+  function getCurrentPlayer() {
+    return currentPlayer;
   }
 
   return {
     playRound,
     checkWinner,
     switchTurn,
+    resetGame,
+    gameOver,
+    getCurrentPlayer,
   };
 })();
 
 const domManager = (() => {
   const gameBoardElement = document.getElementById("gameBoard");
+  const turnDisplayElement = document.getElementById("turnDisplay");
+
+  function turnUpdater() {
+    const currentPlayer = gameController.getCurrentPlayer();
+    turnDisplayElement.textContent = `${currentPlayer.name}'s turn (${currentPlayer.marker})`;
+  }
 
   //create gameboard DOM
   function createGameboardDOM() {
@@ -161,9 +225,39 @@ const domManager = (() => {
     }
   }
 
+  function displayResult(result) {
+    if (result === "tie") {
+      turnDisplayElement.textContent = "It's a tie!";
+    } else {
+      turnDisplayElement.textContent = `${result.name} wins!`;
+    }
+  }
+
   return {
     createGameboardDOM,
     domUpdater,
+    turnUpdater,
+    displayResult,
+  };
+})();
+
+const buttonManager = (() => {
+  const themeButton = document.getElementById("themeButton");
+  const restartButton = document.getElementById("restartButton");
+
+  function toggleTheme() {
+    const isLight = document.body.classList.toggle("light");
+    themeButton.textContent = isLight ? "Dark Mode" : "Light Mode";
+  }
+  themeButton.addEventListener("click", toggleTheme);
+
+  restartButton.addEventListener("click", () => {
+    gameController.resetGame();
+    domManager.domUpdater();
+  });
+
+  return {
+    toggleTheme,
   };
 })();
 
