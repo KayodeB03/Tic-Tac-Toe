@@ -1,6 +1,6 @@
 # Tic-Tac-Toe
 
-# A simple Tic Tac Toe game built with HTML, CSS, and JavaScript.
+# A simple Tic Tac Toe game built with HTML, CSS, and JavaScript. Odin Project Exercise.
 
 ## Features
 
