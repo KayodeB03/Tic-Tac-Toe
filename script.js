@@ -40,15 +40,17 @@ const gameBoard = (() => {
 
 const gameController = (() => {
   function playerCreator(name, marker) {
-    const player = function () {
-      this.name = name;
-      this.marker = marker;
+    return {
+      name,
+      marker,
     };
-    return new player();
   }
 
-  const player1 = playerCreator(`${"Player 1"}`, "X");
-  const player2 = playerCreator(`${"Player 2"}`, "O");
+  const player1Name = prompt("Enter Player 1's name:");
+  const player2Name = prompt("Enter Player 2's name:");
+
+  const player1 = playerCreator(player1Name, "X");
+  const player2 = playerCreator(player2Name, "O");
 
   let currentPlayer = player1;
 
